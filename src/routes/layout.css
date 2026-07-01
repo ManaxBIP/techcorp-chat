@@ -2,82 +2,89 @@
 @import "tw-animate-css";
 @import "shadcn-svelte/tailwind.css";
 @import "@fontsource-variable/inter";
+@import "@fontsource-variable/space-grotesk";
+@import "@fontsource-variable/jetbrains-mono";
 
 @custom-variant dark (&:is(.dark *));
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
-:root {
-	--background: oklch(1 0 0);
-	--foreground: oklch(0.145 0 0);
-	--card: oklch(1 0 0);
-	--card-foreground: oklch(0.145 0 0);
-	--popover: oklch(1 0 0);
-	--popover-foreground: oklch(0.145 0 0);
-	--primary: oklch(0.205 0 0);
-	--primary-foreground: oklch(0.985 0 0);
-	--secondary: oklch(0.97 0 0);
-	--secondary-foreground: oklch(0.205 0 0);
-	--muted: oklch(0.97 0 0);
-	--muted-foreground: oklch(0.556 0 0);
-	--accent: oklch(0.97 0 0);
-	--accent-foreground: oklch(0.205 0 0);
-	--destructive: oklch(0.577 0.245 27.325);
-	--border: oklch(0.922 0 0);
-	--input: oklch(0.922 0 0);
-	--ring: oklch(0.708 0 0);
-	--chart-1: oklch(0.87 0 0);
-	--chart-2: oklch(0.556 0 0);
-	--chart-3: oklch(0.439 0 0);
-	--chart-4: oklch(0.371 0 0);
-	--chart-5: oklch(0.269 0 0);
-	--radius: 0.625rem;
-	--sidebar: oklch(0.985 0 0);
-	--sidebar-foreground: oklch(0.145 0 0);
-	--sidebar-primary: oklch(0.205 0 0);
-	--sidebar-primary-foreground: oklch(0.985 0 0);
-	--sidebar-accent: oklch(0.97 0 0);
-	--sidebar-accent-foreground: oklch(0.205 0 0);
-	--sidebar-border: oklch(0.922 0 0);
-	--sidebar-ring: oklch(0.708 0 0);
-}
+/*
+  Signal Glass — TechCorp Financial Intelligence Engine
+  A dark vault of frosted panels lit by two drifting data signals
+  (emerald = secure/growth, sapphire = live inference). Every panel
+  reads as glass suspended in that ambient light, not a flat card.
+*/
 
+:root,
 .dark {
-	--background: oklch(0.145 0 0);
-	--foreground: oklch(0.985 0 0);
-	--card: oklch(0.205 0 0);
-	--card-foreground: oklch(0.985 0 0);
-	--popover: oklch(0.205 0 0);
-	--popover-foreground: oklch(0.985 0 0);
-	--primary: oklch(0.922 0 0);
-	--primary-foreground: oklch(0.205 0 0);
-	--secondary: oklch(0.269 0 0);
-	--secondary-foreground: oklch(0.985 0 0);
-	--muted: oklch(0.269 0 0);
-	--muted-foreground: oklch(0.708 0 0);
-	--accent: oklch(0.269 0 0);
-	--accent-foreground: oklch(0.985 0 0);
-	--destructive: oklch(0.704 0.191 22.216);
-	--border: oklch(1 0 0 / 10%);
-	--input: oklch(1 0 0 / 15%);
-	--ring: oklch(0.556 0 0);
-	--chart-1: oklch(0.87 0 0);
-	--chart-2: oklch(0.556 0 0);
-	--chart-3: oklch(0.439 0 0);
-	--chart-4: oklch(0.371 0 0);
-	--chart-5: oklch(0.269 0 0);
-	--sidebar: oklch(0.205 0 0);
-	--sidebar-foreground: oklch(0.985 0 0);
-	--sidebar-primary: oklch(0.488 0.243 264.376);
-	--sidebar-primary-foreground: oklch(0.985 0 0);
-	--sidebar-accent: oklch(0.269 0 0);
-	--sidebar-accent-foreground: oklch(0.985 0 0);
-	--sidebar-border: oklch(1 0 0 / 10%);
-	--sidebar-ring: oklch(0.556 0 0);
+	--void: #0a0e13;
+	--void-soft: #10161e;
+	--void-raised: #161d27;
+	--ink: #eaf1f7;
+	--mist: #9aa7b8;
+	--mist-dim: #62707f;
+
+	--signal-emerald: #33d9a8;
+	--signal-sapphire: #5aa9ff;
+	--signal-amber: #f0b25a;
+	--signal-rose: #fb7185;
+
+	--glass-fill: rgba(255, 255, 255, 0.045);
+	--glass-fill-strong: rgba(255, 255, 255, 0.075);
+	--glass-border: rgba(255, 255, 255, 0.09);
+	--glass-highlight: rgba(255, 255, 255, 0.3);
+
+	--background: var(--void);
+	--foreground: var(--ink);
+	--card: var(--void-soft);
+	--card-foreground: var(--ink);
+	--popover: var(--void-raised);
+	--popover-foreground: var(--ink);
+	--primary: var(--signal-emerald);
+	--primary-foreground: #04140f;
+	--secondary: var(--void-raised);
+	--secondary-foreground: var(--ink);
+	--muted: var(--void-soft);
+	--muted-foreground: var(--mist);
+	--accent: var(--glass-fill-strong);
+	--accent-foreground: var(--ink);
+	--destructive: var(--signal-rose);
+	--border: var(--glass-border);
+	--input: var(--glass-fill);
+	--ring: var(--signal-emerald);
+	--chart-1: var(--signal-emerald);
+	--chart-2: var(--signal-sapphire);
+	--chart-3: var(--signal-amber);
+	--chart-4: var(--mist);
+	--chart-5: var(--mist-dim);
+	--radius: 0.85rem;
+	--sidebar: var(--void-soft);
+	--sidebar-foreground: var(--ink);
+	--sidebar-primary: var(--signal-emerald);
+	--sidebar-primary-foreground: #04140f;
+	--sidebar-accent: var(--glass-fill-strong);
+	--sidebar-accent-foreground: var(--ink);
+	--sidebar-border: var(--glass-border);
+	--sidebar-ring: var(--signal-emerald);
 }
 
 @theme inline {
 	--font-sans: 'Inter Variable', sans-serif;
+	--font-display: 'Space Grotesk Variable', 'Inter Variable', sans-serif;
+	--font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+
+	--color-void: var(--void);
+	--color-void-soft: var(--void-soft);
+	--color-void-raised: var(--void-raised);
+	--color-ink: var(--ink);
+	--color-mist: var(--mist);
+	--color-mist-dim: var(--mist-dim);
+	--color-signal-emerald: var(--signal-emerald);
+	--color-signal-sapphire: var(--signal-sapphire);
+	--color-signal-amber: var(--signal-amber);
+	--color-signal-rose: var(--signal-rose);
+
 	--color-sidebar-ring: var(--sidebar-ring);
 	--color-sidebar-border: var(--sidebar-border);
 	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -127,5 +134,221 @@
 	}
 	html {
 		@apply font-sans;
+	}
+}
+
+@layer components {
+	/* Ambient backdrop: the room the glass floats in */
+	.signal-field {
+		position: fixed;
+		inset: 0;
+		z-index: -1;
+		overflow: hidden;
+		background: var(--void);
+	}
+
+	.signal-glow {
+		position: absolute;
+		border-radius: 50%;
+		filter: blur(90px);
+		will-change: transform;
+	}
+
+	.signal-glow--emerald {
+		top: -18%;
+		left: -12%;
+		width: min(58vw, 620px);
+		height: min(58vw, 620px);
+		background: radial-gradient(circle, color-mix(in oklab, var(--signal-emerald) 55%, transparent) 0%, transparent 72%);
+		animation: drift-emerald 24s ease-in-out infinite alternate;
+	}
+
+	.signal-glow--sapphire {
+		bottom: -20%;
+		right: -14%;
+		width: min(62vw, 680px);
+		height: min(62vw, 680px);
+		background: radial-gradient(circle, color-mix(in oklab, var(--signal-sapphire) 50%, transparent) 0%, transparent 72%);
+		animation: drift-sapphire 30s ease-in-out infinite alternate;
+	}
+
+	.signal-grain {
+		position: absolute;
+		inset: -10%;
+		opacity: 0.05;
+		mix-blend-mode: overlay;
+		pointer-events: none;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+	}
+
+	/* Vignette: pulls focus inward, gives the field a sense of enclosure */
+	.signal-field::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: radial-gradient(120% 85% at 50% 38%, transparent 50%, rgba(0, 0, 0, 0.5) 100%);
+		pointer-events: none;
+	}
+
+	.signal-glow-wrap {
+		position: absolute;
+		inset: 0;
+		transition: transform 0.7s cubic-bezier(0.22, 0.9, 0.2, 1);
+		will-change: transform;
+	}
+
+	/* Glass panel — base surface. The dispersion line at the top edge is where
+	   the two signals (emerald + sapphire) meet, as if refracting through the pane. */
+	.glass {
+		position: relative;
+		background: var(--glass-fill);
+		border: 1px solid var(--glass-border);
+		backdrop-filter: blur(22px) saturate(150%);
+		-webkit-backdrop-filter: blur(22px) saturate(150%);
+		box-shadow:
+			0 24px 48px -28px rgba(0, 0, 0, 0.65),
+			inset 0 1px 0 rgba(255, 255, 255, 0.05),
+			inset 0 -16px 28px -24px rgba(0, 0, 0, 0.4);
+	}
+
+	.glass::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 8%;
+		right: 8%;
+		height: 1px;
+		background: linear-gradient(
+			90deg,
+			transparent,
+			color-mix(in oklab, var(--signal-emerald) 65%, white) 35%,
+			color-mix(in oklab, var(--signal-sapphire) 65%, white) 65%,
+			transparent
+		);
+		opacity: 0.5;
+		pointer-events: none;
+	}
+
+	.glass-strong {
+		background: var(--glass-fill-strong);
+	}
+
+	.glass-emerald {
+		background: linear-gradient(165deg, color-mix(in oklab, var(--signal-emerald) 14%, transparent), var(--glass-fill) 60%);
+		border-color: color-mix(in oklab, var(--signal-emerald) 30%, var(--glass-border));
+		box-shadow:
+			0 24px 48px -28px rgba(0, 0, 0, 0.65),
+			inset 0 1px 0 rgba(255, 255, 255, 0.06),
+			inset 0 -16px 28px -24px rgba(0, 0, 0, 0.4),
+			0 0 36px -18px color-mix(in oklab, var(--signal-emerald) 55%, transparent);
+	}
+
+	.glass-sapphire {
+		background: linear-gradient(165deg, color-mix(in oklab, var(--signal-sapphire) 16%, transparent), var(--glass-fill) 60%);
+		border-color: color-mix(in oklab, var(--signal-sapphire) 32%, var(--glass-border));
+		box-shadow:
+			0 24px 48px -28px rgba(0, 0, 0, 0.65),
+			inset 0 1px 0 rgba(255, 255, 255, 0.06),
+			inset 0 -16px 28px -24px rgba(0, 0, 0, 0.4),
+			0 0 36px -18px color-mix(in oklab, var(--signal-sapphire) 55%, transparent);
+	}
+
+	.glass-amber {
+		background: linear-gradient(165deg, color-mix(in oklab, var(--signal-amber) 16%, transparent), var(--glass-fill) 60%);
+		border-color: color-mix(in oklab, var(--signal-amber) 32%, var(--glass-border));
+		box-shadow:
+			0 24px 48px -28px rgba(0, 0, 0, 0.65),
+			inset 0 1px 0 rgba(255, 255, 255, 0.06),
+			inset 0 -16px 28px -24px rgba(0, 0, 0, 0.4),
+			0 0 36px -18px color-mix(in oklab, var(--signal-amber) 45%, transparent);
+	}
+
+	.glass-rose {
+		background: linear-gradient(165deg, color-mix(in oklab, var(--signal-rose) 14%, transparent), var(--glass-fill) 60%);
+		border-color: color-mix(in oklab, var(--signal-rose) 30%, var(--glass-border));
+		box-shadow:
+			0 24px 48px -28px rgba(0, 0, 0, 0.65),
+			inset 0 1px 0 rgba(255, 255, 255, 0.06),
+			inset 0 -16px 28px -24px rgba(0, 0, 0, 0.4),
+			0 0 36px -18px color-mix(in oklab, var(--signal-rose) 45%, transparent);
+	}
+
+	/* Sheen: a single sweep of caught light, only on deliberate interaction */
+	.sheen {
+		position: relative;
+		overflow: hidden;
+		isolation: isolate;
+	}
+
+	.sheen::after {
+		content: '';
+		position: absolute;
+		top: -60%;
+		left: -25%;
+		width: 35%;
+		height: 220%;
+		background: linear-gradient(115deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+		transform: translateX(-140%) skewX(-14deg);
+		transition: transform 0.75s ease;
+		pointer-events: none;
+	}
+
+	.sheen:hover::after,
+	.sheen:focus-visible::after {
+		transform: translateX(320%) skewX(-14deg);
+	}
+
+	/* Market pulse ticker */
+	.ticker-track {
+		display: flex;
+		width: max-content;
+		animation: ticker-scroll 38s linear infinite;
+	}
+
+	.ticker-track:hover {
+		animation-play-state: paused;
+	}
+}
+
+@keyframes drift-emerald {
+	from {
+		transform: translate(0, 0) scale(1);
+	}
+	to {
+		transform: translate(7%, 9%) scale(1.08);
+	}
+}
+
+@keyframes drift-sapphire {
+	from {
+		transform: translate(0, 0) scale(1);
+	}
+	to {
+		transform: translate(-8%, -7%) scale(1.05);
+	}
+}
+
+@keyframes ticker-scroll {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(-50%);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.signal-glow--emerald,
+	.signal-glow--sapphire {
+		animation: none;
+	}
+	.signal-glow-wrap {
+		transition: none;
+	}
+	.ticker-track {
+		animation: none;
+	}
+	.sheen::after {
+		transition: none;
 	}
 }
