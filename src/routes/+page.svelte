@@ -27,8 +27,8 @@
 	let chatEndRef = $state<HTMLDivElement | null>(null);
 
 	// Bindings for configuration controls (initialized to current store values)
-	let localApiUrl = $state('https://tasty-doodles-create.loca.lt/api/chat');
-	let localSimulationMode = $state(true);
+	let localApiUrl = $state('https://character-viewing-employer.ngrok-free.dev/api/chat');
+	let localSimulationMode = $state(false);
 
 	// Model settings
 	let availableModels = $state<string[]>(['Phi-3.5-Financial', 'phi3', 'llama3']);
@@ -40,7 +40,18 @@
 
 	// Sync settings when they change in the dashboard
 	function updateSettings() {
-		chatStore.setApiUrl(localApiUrl);
+		let cleanedUrl = localApiUrl.trim();
+		if (cleanedUrl) {
+			// Replace double slashes (except in http:// or https://)
+			cleanedUrl = cleanedUrl.replace(/([^:]\/)\/+/g, '$1');
+			// If it's a raw domain without /api/chat, let's append it
+			cleanedUrl = cleanedUrl.replace(/\/$/, '');
+			if (!cleanedUrl.endsWith('/api/chat') && cleanedUrl.indexOf('/api/') === -1) {
+				cleanedUrl = cleanedUrl + '/api/chat';
+			}
+		}
+
+		chatStore.setApiUrl(cleanedUrl);
 		chatStore.setSimulationMode(localSimulationMode);
 
 		if (localSimulationMode) {
@@ -51,6 +62,11 @@
 		fetchModels();
 	}
 
+	// Svelte 5 reactive effect to track config inputs and sync automatically
+	$effect(() => {
+		updateSettings();
+	});
+
 	// Fetch models from local Ollama
 	async function fetchModels() {
 		if (localSimulationMode) {
@@ -60,8 +76,20 @@
 
 		isFetchingModels = true;
 		try {
-			const url = new URL(localApiUrl);
-			const res = await fetch(`${url.origin}/api/tags`);
+			if (!localApiUrl.startsWith('http://') && !localApiUrl.startsWith('https://')) {
+				return;
+			}
+			
+			let cleanedUrl = localApiUrl.trim().replace(/([^:]\/)\/+/g, '$1');
+			const url = new URL(cleanedUrl);
+			let fetchUrl = `${url.origin}/api/tags`;
+			
+			const isExternal = !localApiUrl.includes('localhost') && !localApiUrl.includes('127.0.5.1') && !localApiUrl.includes('127.0.0.1');
+			if (isExternal) {
+				fetchUrl = `/api/proxy?target=${encodeURIComponent(fetchUrl)}`;
+			}
+			
+			const res = await fetch(fetchUrl);
 			if (res.ok) {
 				const data = await res.json();
 				if (data.models && data.models.length > 0) {
@@ -97,10 +125,25 @@
 		}
 
 		try {
-			const url = new URL(localApiUrl);
-			// mode: 'no-cors' allows pinging localhost/remote without failing on CORS security checks
-			await fetch(url.origin, { method: 'GET', mode: 'no-cors' });
-			isServerConnected = true;
+			if (!localApiUrl.startsWith('http://') && !localApiUrl.startsWith('https://')) {
+				isServerConnected = false;
+				return;
+			}
+			
+			let cleanedUrl = localApiUrl.trim().replace(/([^:]\/)\/+/g, '$1');
+			const url = new URL(cleanedUrl);
+			let checkUrl = url.origin;
+			const isExternal = !localApiUrl.includes('localhost') && !localApiUrl.includes('127.0.5.1') && !localApiUrl.includes('127.0.0.1');
+			
+			if (isExternal) {
+				checkUrl = `/api/proxy?target=${encodeURIComponent(checkUrl)}`;
+				const res = await fetch(checkUrl);
+				isServerConnected = res.ok;
+			} else {
+				// mode: 'no-cors' allows pinging localhost/remote without failing on CORS security checks
+				await fetch(checkUrl, { method: 'GET', mode: 'no-cors' });
+				isServerConnected = true;
+			}
 		} catch (err) {
 			isServerConnected = false;
 		}
@@ -112,16 +155,7 @@
 			document.documentElement.classList.add('dark');
 		}
 
-		// Configure store defaults for this dashboard
-		chatStore.setModel('Phi-3.5-Financial');
-		chatStore.setSimulationMode(localSimulationMode);
-		chatStore.setApiUrl(localApiUrl);
-
-		// Initial server connection verification
-		checkConnection();
-		fetchModels();
-
-		// Check reachability of the inference host every 5 seconds
+		// Poll reachability of the inference host every 5 seconds
 		connectionInterval = setInterval(checkConnection, 5000);
 	});
 
@@ -236,7 +270,7 @@
 								<select
 									value={$chatStore.model}
 									onchange={(e) => chatStore.setModel(e.currentTarget.value)}
-									class="flex-1 bg-zinc-950 border border-zinc-800 rounded-lg text-zinc-200 text-xs px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all font-mono"
+									class="flex-1 bg-zinc-950 border border-zinc-800 rounded-lg text-zinc-200 text-xs px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all font-mono h-8"
 								>
 									{#each availableModels as modelName}
 										<option value={modelName}>{modelName}</option>
@@ -246,7 +280,7 @@
 									variant="outline"
 									size="icon"
 									onclick={fetchModels}
-									class="h-8 w-8 border-zinc-800 bg-zinc-950 text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 animate-none"
+									class="h-8 w-8 border-zinc-800 bg-zinc-950 text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 animate-none shrink-0"
 									title="Rafraîchir les modèles locaux"
 								>
 									<RefreshCw size={13} class={isFetchingModels ? 'animate-spin' : ''} />
@@ -271,10 +305,9 @@
 						id="api-url"
 						type="text"
 						bind:value={localApiUrl}
-						oninput={updateSettings}
 						disabled={localSimulationMode}
 						class="bg-zinc-950 border-zinc-800 text-zinc-150 text-xs focus:ring-1 focus:ring-emerald-500/30 focus:border-emerald-500 focus-visible:ring-emerald-500/30 focus-visible:border-emerald-500"
-						placeholder="https://tasty-doodles-create.loca.lt/api/chat"
+						placeholder="https://character-viewing-employer.ngrok-free.dev/api/chat"
 					/>
 				</div>
 
@@ -292,7 +325,6 @@
 						<input
 							type="checkbox"
 							bind:checked={localSimulationMode}
-							onchange={updateSettings}
 							class="sr-only peer"
 						/>
 						<div

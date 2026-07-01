@@ -19,7 +19,7 @@ export interface ChatStoreState {
 const DEFAULT_STATE: ChatStoreState = {
   messages: [],
   isLoading: false,
-  apiUrl: 'https://tasty-doodles-create.loca.lt/api/chat',
+  apiUrl: 'https://character-viewing-employer.ngrok-free.dev//api/chat',
   model: 'llama3',
   streamMode: true,
   simulationMode: false
@@ -105,9 +105,21 @@ Pour désactiver la simulation et se connecter à l'API, basculez la variable \`
         content: m.content
       }));
 
-    console.log("Calling Ollama API:", { apiUrl, model, streamMode, messagesCount: apiMessages.length });
+    let formattedApiUrl = apiUrl.trim();
+    if (formattedApiUrl && !formattedApiUrl.endsWith('/api/chat') && !formattedApiUrl.endsWith('/api/chat/')) {
+      formattedApiUrl = formattedApiUrl.replace(/\/$/, '') + '/api/chat';
+    }
 
-    const response = await fetch(apiUrl, {
+    // Route external API requests through SvelteKit server proxy to bypass CORS
+    let fetchUrl = formattedApiUrl;
+    const isExternal = !formattedApiUrl.includes('localhost') && !formattedApiUrl.includes('127.0.0.1');
+    if (isExternal) {
+      fetchUrl = `/api/proxy?target=${encodeURIComponent(formattedApiUrl)}`;
+    }
+
+    console.log("Calling Ollama API:", { fetchUrl, targetUrl: formattedApiUrl, model, streamMode });
+
+    const response = await fetch(fetchUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
