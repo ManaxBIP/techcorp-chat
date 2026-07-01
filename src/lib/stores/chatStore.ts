@@ -19,7 +19,7 @@ export interface ChatStoreState {
 const DEFAULT_STATE: ChatStoreState = {
   messages: [],
   isLoading: false,
-  apiUrl: 'http://127.0.0.1:11434/api/chat',
+  apiUrl: 'https://tasty-doodles-create.loca.lt/api/chat',
   model: 'llama3',
   streamMode: true,
   simulationMode: false
@@ -133,8 +133,8 @@ Pour désactiver la simulation et se connecter à l'API, basculez la variable \`
       const tokenQueue: string[] = [];
       let isTyping = false;
       let streamFinished = false;
-      
-      let resolveTyping: () => void = () => {};
+
+      let resolveTyping: () => void = () => { };
       const typingFinishedPromise = new Promise<void>((resolve) => {
         resolveTyping = resolve;
       });
@@ -160,7 +160,7 @@ Pour désactiver la simulation et se connecter à l'API, basculez la variable \`
             return { ...currentState, messages: updatedMessages };
           });
         }
-        
+
         // 12ms delay per token guarantees smooth typing even if tokens arrive in bulk
         setTimeout(processQueue, 12);
       }
@@ -242,7 +242,7 @@ Pour désactiver la simulation et se connecter à l'API, basculez la variable \`
 
   return {
     subscribe,
-    
+
     /**
      * Configure the API Endpoint URL
      */
@@ -313,7 +313,7 @@ Pour désactiver la simulation et se connecter à l'API, basculez la variable \`
         }
       } catch (error) {
         console.error('Error sending message:', error);
-        
+
         // Append error description to the assistant message
         update((currentState) => {
           const updatedMessages = currentState.messages.map((msg) => {

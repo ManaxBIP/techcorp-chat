@@ -17,14 +17,17 @@
 		ShieldCheck,
 		MessageSquareCode,
 		Sparkles,
-		RefreshCw
+		RefreshCw,
+		Menu,
+		X
 	} from '@lucide/svelte';
 
 	let inputMessage = $state('');
+	let isSidebarOpen = $state(false);
 	let chatEndRef = $state<HTMLDivElement | null>(null);
 
 	// Bindings for configuration controls (initialized to current store values)
-	let localApiUrl = $state('http://127.0.0.1:11434/api/chat');
+	let localApiUrl = $state('https://tasty-doodles-create.loca.lt/api/chat');
 	let localSimulationMode = $state(true);
 
 	// Model settings
@@ -164,19 +167,36 @@
 
 <div class="h-screen bg-zinc-950 text-zinc-50 flex overflow-hidden font-sans antialiased">
 	<!-- 1. Left Sidebar -->
-	<aside class="w-80 bg-zinc-900 border-r border-zinc-800 flex flex-col justify-between shrink-0">
+	<aside
+		class="fixed inset-y-0 left-0 z-50 w-80 bg-zinc-900 border-r border-zinc-800 flex flex-col justify-between shrink-0 transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:z-0 {isSidebarOpen
+			? 'translate-x-0'
+			: '-translate-x-full'}"
+	>
 		<div class="p-6 space-y-6">
 			<!-- Title Branding -->
-			<div class="flex items-center gap-3">
-				<div
-					class="h-9 w-9 rounded-lg bg-emerald-600/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400"
+			<div
+				class="flex items-center justify-between border-b border-zinc-800/60 pb-4 lg:border-b-0 lg:pb-0"
+			>
+				<div class="flex items-center gap-3">
+					<div
+						class="h-9 w-9 rounded-lg bg-emerald-600/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400"
+					>
+						<Terminal size={18} />
+					</div>
+					<div>
+						<h2 class="text-sm font-semibold tracking-wider uppercase text-zinc-400">TechCorp</h2>
+						<p class="text-[10px] text-zinc-500">v2.4 - Chatbot Décisionnelle</p>
+					</div>
+				</div>
+				<!-- Close button on mobile -->
+				<Button
+					variant="ghost"
+					size="icon"
+					onclick={() => (isSidebarOpen = false)}
+					class="lg:hidden h-8 w-8 text-zinc-400 hover:text-zinc-200"
 				>
-					<Terminal size={18} />
-				</div>
-				<div>
-					<h2 class="text-sm font-semibold tracking-wider uppercase text-zinc-400">TechCorp</h2>
-					<p class="text-[10px] text-zinc-500">v2.4 - Chatbot Décisionnelle</p>
-				</div>
+					<X size={15} />
+				</Button>
 			</div>
 
 			<!-- Status Panel (Connection & Active Model) -->
@@ -254,7 +274,7 @@
 						oninput={updateSettings}
 						disabled={localSimulationMode}
 						class="bg-zinc-950 border-zinc-800 text-zinc-150 text-xs focus:ring-1 focus:ring-emerald-500/30 focus:border-emerald-500 focus-visible:ring-emerald-500/30 focus-visible:border-emerald-500"
-						placeholder="http://localhost:11434/api/chat"
+						placeholder="https://tasty-doodles-create.loca.lt/api/chat"
 					/>
 				</div>
 
@@ -301,24 +321,49 @@
 		</div>
 	</aside>
 
+	<!-- Backdrop for mobile sidebar -->
+	{#if isSidebarOpen}
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div
+			onclick={() => (isSidebarOpen = false)}
+			class="fixed inset-0 bg-zinc-950/80 backdrop-blur-sm z-40 lg:hidden"
+		></div>
+	{/if}
+
 	<!-- 2. Main Area -->
 	<main class="flex-1 flex flex-col bg-zinc-950 overflow-hidden relative">
 		<!-- Header -->
 		<header
-			class="h-16 border-b border-zinc-800 bg-zinc-900/30 backdrop-blur flex items-center justify-between px-8 z-10 shrink-0"
+			class="h-16 border-b border-zinc-800 bg-zinc-900/30 backdrop-blur flex items-center justify-between px-4 lg:px-8 z-10 shrink-0"
 		>
-			<div class="flex items-center gap-3">
-				<div class="h-2 h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></div>
+			<div class="flex items-center gap-2.5">
+				<!-- Sidebar toggle for mobile -->
+				<Button
+					variant="outline"
+					size="icon"
+					onclick={() => (isSidebarOpen = true)}
+					class="lg:hidden h-8 w-8 border-zinc-800 bg-zinc-900 text-zinc-400 hover:bg-zinc-850 hover:text-zinc-200 shrink-0"
+					title="Ouvrir le panneau"
+				>
+					<Menu size={15} />
+				</Button>
+
+				<div class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></div>
 				<div>
-					<h1 class="text-sm font-semibold text-zinc-150 uppercase tracking-wider">
+					<h1
+						class="text-xs sm:text-sm font-semibold text-zinc-150 uppercase tracking-wider line-clamp-1"
+					>
 						Financial Intelligence Engine
 					</h1>
-					<p class="text-[10px] text-zinc-500">Inférence temps réel & Analyses prédictives</p>
+					<p class="text-[9px] sm:text-[10px] text-zinc-500 hidden sm:block">
+						Inférence temps réel & Analyses prédictives
+					</p>
 				</div>
 			</div>
 
-			<div class="flex items-center gap-4 text-xs text-zinc-400">
-				<span
+			<div class="flex items-center gap-4 text-[10px] sm:text-xs text-zinc-450 shrink-0">
+				<span class="hidden md:inline"
 					>Hôte : <code class="bg-zinc-900 px-1.5 py-0.5 rounded text-[10px] text-zinc-300"
 						>{localSimulationMode ? 'Simulation locale' : new URL(localApiUrl).host}</code
 					></span
@@ -329,11 +374,11 @@
 		<!-- Chat View Area (ScrollArea) -->
 		<div class="flex-1 overflow-hidden relative">
 			<ScrollArea class="h-full w-full">
-				<div class="max-w-4xl mx-auto px-6 py-8 space-y-6">
+				<div class="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
 					{#if $chatStore.messages.length === 0}
 						<!-- Empty Dashboard Info -->
 						<div
-							class="h-[60vh] flex flex-col items-center justify-center text-center max-w-md mx-auto space-y-6"
+							class="h-[60vh] flex flex-col items-center justify-center text-center max-w-md mx-auto space-y-6 px-4"
 						>
 							<div
 								class="h-14 w-14 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 shadow-md"
@@ -344,12 +389,12 @@
 								<h3 class="text-sm font-semibold text-zinc-200">
 									Prêt pour l'inférence financière
 								</h3>
-								<p class="text-xs text-zinc-400 leading-relaxed">
+								<p class="text-xs text-zinc-455 leading-relaxed">
 									Interrogez l'assistant décisionnel sur des analyses financières, des études de
 									risques ou tout autre sujet. Le store gère l'état d'inférence de bout en bout.
 								</p>
 							</div>
-							<div class="flex gap-2">
+							<div class="flex flex-col sm:flex-row gap-2 w-full justify-center">
 								<Button
 									variant="outline"
 									size="sm"
@@ -358,7 +403,7 @@
 											'Simule une analyse des risques géopolitiques sur les marchés européens.';
 										handleSend();
 									}}
-									class="text-[11px] border-zinc-800 bg-zinc-900 hover:bg-zinc-850 text-zinc-300"
+									class="text-[11px] border-zinc-800 bg-zinc-900 hover:bg-zinc-850 text-zinc-300 py-2.5 sm:py-2"
 								>
 									"Analyse risques européens"
 								</Button>
@@ -369,7 +414,7 @@
 										inputMessage = 'En quoi consiste le modèle Phi-3.5-Financial ?';
 										handleSend();
 									}}
-									class="text-[11px] border-zinc-800 bg-zinc-900 hover:bg-zinc-850 text-zinc-300"
+									class="text-[11px] border-zinc-800 bg-zinc-900 hover:bg-zinc-850 text-zinc-300 py-2.5 sm:py-2"
 								>
 									"Explication Phi-3.5"
 								</Button>
@@ -379,26 +424,30 @@
 						<!-- Messages Stream (ChatGPT-style representation) -->
 						<div class="space-y-6">
 							{#each $chatStore.messages as message (message.id)}
-								<div class="flex gap-4 {message.role === 'user' ? 'justify-end' : 'justify-start'}">
+								<div
+									class="flex gap-3 sm:gap-4 {message.role === 'user'
+										? 'justify-end'
+										: 'justify-start'}"
+								>
 									<!-- Assistant Bot Icon -->
 									{#if message.role === 'assistant'}
 										<div
-											class="h-8 w-8 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-300 shrink-0 shadow-sm mt-0.5"
+											class="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-350 shrink-0 shadow-sm mt-0.5"
 										>
 											<Bot
-												size={15}
+												size={14}
 												class={$chatStore.isLoading && !message.content ? 'animate-spin' : ''}
 											/>
 										</div>
 									{/if}
 
-									<div class="space-y-1 max-w-[78%]">
+									<div class="space-y-1 max-w-[88%] sm:max-w-[78%]">
 										<!-- Message Bubble
                       - user: right (zinc-800)
                       - assistant: left (transparent, white text)
                     -->
 										<div
-											class="p-4 text-xs leading-relaxed whitespace-pre-wrap transition-all
+											class="p-3 sm:p-4 text-xs leading-relaxed whitespace-pre-wrap transition-all
                       {message.role === 'user'
 												? 'bg-zinc-800 text-zinc-100 rounded-2xl rounded-tr-none border border-zinc-700/80 shadow-md shadow-zinc-950/20'
 												: 'bg-transparent text-zinc-50 border-0 rounded-none'}"
@@ -444,9 +493,9 @@
 									<!-- User Icon -->
 									{#if message.role === 'user'}
 										<div
-											class="h-8 w-8 rounded-lg bg-emerald-950 border border-emerald-800 text-emerald-400 flex items-center justify-center shrink-0 shadow-sm mt-0.5"
+											class="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-emerald-950 border border-emerald-800 text-emerald-400 flex items-center justify-center shrink-0 shadow-sm mt-0.5"
 										>
-											<User size={15} />
+											<User size={14} />
 										</div>
 									{/if}
 								</div>
@@ -460,7 +509,7 @@
 		</div>
 
 		<!-- Fixed Bottom Bar -->
-		<div class="p-6 border-t border-zinc-900 bg-zinc-950 z-10 shrink-0">
+		<div class="p-4 sm:p-6 border-t border-zinc-900 bg-zinc-950 z-10 shrink-0">
 			<div class="max-w-4xl mx-auto">
 				<form
 					onsubmit={(e) => {
@@ -472,24 +521,26 @@
 					<Input
 						bind:value={inputMessage}
 						onkeydown={handleKeyDown}
-						placeholder="Saisissez votre commande financière ou question..."
+						placeholder="Saisissez votre commande..."
 						disabled={$chatStore.isLoading}
-						class="flex-1 bg-transparent border-0 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-100 text-xs py-3 px-3 shadow-none placeholder-zinc-500"
+						class="flex-1 bg-transparent border-0 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-zinc-100 text-xs py-2 sm:py-3 px-2 sm:px-3 shadow-none placeholder-zinc-500"
 					/>
 					<Button
 						type="submit"
 						disabled={!inputMessage.trim() || $chatStore.isLoading}
-						class="bg-emerald-600 hover:bg-emerald-500 text-zinc-950 font-bold px-4 py-2 text-xs rounded-lg transition-all shadow-sm flex items-center gap-1.5"
+						class="bg-emerald-600 hover:bg-emerald-500 text-zinc-950 font-bold px-3 py-2 sm:px-4 text-xs rounded-lg transition-all shadow-sm flex items-center gap-1.5"
 					>
 						{#if $chatStore.isLoading}
 							<Loader2 size={13} class="animate-spin text-zinc-950" />
 						{/if}
-						Envoyer
+						<span class="hidden sm:inline">Envoyer</span>
+						{#if !$chatStore.isLoading}
+							<Send size={13} class="block sm:hidden" />
+						{/if}
 					</Button>
 				</form>
-				<p class="text-[10px] text-zinc-650 mt-2 text-center select-none">
-					Inférence sécurisée de niveau entreprise • Les données de transactions restent
-					confidentielles
+				<p class="text-[9px] sm:text-[10px] text-zinc-650 mt-2 text-center select-none">
+					Inférence sécurisée de niveau entreprise • Données de transactions confidentielles
 				</p>
 			</div>
 		</div>
